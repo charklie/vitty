@@ -1,65 +1,69 @@
 module main
 
 import os
+import info
 
 struct Config {
-	overriden_ascii ?string
-	single_info     ?string
-	custom_config   ?string
-	ignore_config   bool
+	ascii_override ?string
+	single_info    ?string
+	custom_config  ?string
+	ignore_config  bool
+}
+
+fn Config.new(ascii_override ?string, single_info ?string, custom_config ?string, ignore_config bool) Config {
+	return Config{ascii_override, single_info, custom_config, ignore_config}
 }
 
 fn help() {}
 
 fn parse_args() Config {
-	mut overriden_ascii_ := ?string(none)
-	mut single_info_ := ?string(none)
-	mut custom_config_ := ?string(none)
-	mut ignore_config_ := false
+	mut ascii_override := ?string(none)
+	mut single_info := ?string(none)
+	mut custom_config := ?string(none)
+	mut ignore_config := false
 
 	for idx, item in os.args {
+		
+
+
 		if item.starts_with('-') {
 			match item {
 				'--help', '--usage', '-h' {
 					help()
 				}
 				'--override', '-o' {
-					overriden_ascii_ = if !os.args[idx + 1].starts_with('-') {
+					ascii_override = if !os.args[idx + 1].starts_with('-') {
 						os.args[idx + 1]
 					} else {
 						panic("Couldn't get override, check usage of `--override` with the `--help` flag.")
 					}
 				}
 				'--info', '-i' {
-					single_info_ = if !os.args[idx + 1].starts_with('-') {
+					single_info = if !os.args[idx + 1].starts_with('-') {
 						os.args[idx + 1]
 					} else {
 						panic("Couldn't get the info wanted, check usage of `--info` with the `--help` flag.")
 					}
 				}
 				'--config', '-c' {
-					custom_config_ = if !os.args[idx + 1].starts_with('-') {
+					custom_config = if !os.args[idx + 1].starts_with('-') {
 						os.args[idx + 1]
 					} else {
 						panic("Couldn't get custom config path, check usage of `--config` with the `--help` flag.")
 					}
 				}
 				'--ignore-config' {
-					ignore_config_ = true
+					ignore_config = true
 				}
 				else {}
 			}
 		}
 	}
 
-	return Config {
-		overriden_ascii: overriden_ascii_
-		single_info:     single_info_
-		custom_config:   custom_config_
-		ignore_config:   ignore_config_
-	}
+	return Config.new(ascii_override, single_info, custom_config, ignore_config)
 }
 
 fn main() {
-	println(parse_args())
+	println(info.windows_package_managers())
+	println(info.uptime())
 }
